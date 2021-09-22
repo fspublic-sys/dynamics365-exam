@@ -1,77 +1,93 @@
 <template>
   <v-row justify="center" align="center">
-    <v-col cols="12" sm="8" md="6">
-      <v-card class="logo py-4 d-flex justify-center">
-        <NuxtLogo />
-        <VuetifyLogo />
-      </v-card>
-      <v-card>
-        <v-card-title class="headline">
-          Welcome to the Vuetify + Nuxt.js template
-        </v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>
-            For more information on Vuetify, check out the <a
-              href="https://vuetifyjs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </a>.
-          </p>
-          <p>
-            If you have questions, please join the official <a
-              href="https://chat.vuetifyjs.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="chat"
-            >
-              discord
-            </a>.
-          </p>
-          <p>
-            Find a bug? Report it on the github <a
-              href="https://github.com/vuetifyjs/vuetify/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="contribute"
-            >
-              issue board
-            </a>.
-          </p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a
-            href="https://nuxtjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt Documentation
-          </a>
-          <br>
-          <a
-            href="https://github.com/nuxt/nuxt.js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nuxt GitHub
-          </a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            nuxt
-            to="/inspire"
-          >
-            Continue
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+    <v-col cols="12">
+      <v-tabs-items v-model="tab">
+        <v-tab-item
+          v-for="item in items"
+          :key="item.id"
+          :value="item.id"
+        >
+          <v-card outlined>
+            <v-card-title>問題{{ item.id }}</v-card-title>
+            <v-card-text style="white-space: break-spaces;">{{ item.question }}</v-card-text>
+          </v-card>
+          <v-card flat style="margin-top: 20px;">
+            <component
+              :is="getChoicesType(item.choices_type)"
+              :item="item"
+            ></component>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-col>
+    <v-col cols="12">
+      <v-footer
+        absolute
+      >
+        <v-btn
+          color="primary"
+          @click="prevTab"
+        >
+          前の問題
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="success"
+        >
+          回答確認
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="primary"
+          @click="nextTab"
+        >
+          次の問題
+        </v-btn>
+      </v-footer>
     </v-col>
   </v-row>
 </template>
+
+<script>
+import MultiChoices from '~/components/MultiChoices.vue'
+import SoloChoices from '~/components/SoloChoices.vue'
+import HotSpotChoices from '~/components/HotSpotChoices.vue'
+import DragDropChoices from '~/components/DragDropChoices.vue'
+import exam from '../json/exam.json'
+
+export default {
+  components: { SoloChoices, MultiChoices, HotSpotChoices, DragDropChoices },
+  data () {
+    return {
+      tab: 1,
+      text: 'test',
+      items: exam,
+      answer: ''
+    }
+  },
+  methods: {
+    getChoicesType(type) {
+      switch(type) {
+        case 'solo':
+          return 'solo-choices'
+        case 'multi':
+          return 'multi-choices'
+        case 'hotspot':
+          return 'hot-spot-choices'
+        case 'dragdrop':
+          return 'drag-drop-choices'
+      }
+    },
+    nextTab() {
+      if (this.tab < this.items.length) {
+        this.tab++
+      }
+    },
+    prevTab() {
+      if (this.tab > 1) {
+        this.tab--
+      }
+    }
+  }
+}
+</script>
