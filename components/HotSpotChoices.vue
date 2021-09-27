@@ -3,7 +3,7 @@
     <v-col cols="12">
       <v-card outlined class="px-2">
         <v-row
-          v-for="choices in item.choices"
+          v-for="choices, index in item.choices"
           :key="choices.no"
           no-gutters
           align="center"
@@ -19,6 +19,7 @@
               outlined
               dense
               hide-details
+              @change="changeItem($event, choices.no, index)"
             ></v-select>
           </v-col>
         </v-row>
@@ -28,16 +29,33 @@
 </template>
 
 <script>
+import store from '../store/store'
+
 export default {
   props: {
     item: {
       type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     }
   },
   data () {
     return {
       answer: [],
+    }
+  },
+  methods: {
+    changeItem(event, no, index) {
+      this.answer[index] = `${no}-${event}`
+      const data = {
+        index: this.index,
+        answer: this.answer,
+        id: this.item.id
+      }
+      store.commit('setAnswer', data)
     }
   }
 }

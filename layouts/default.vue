@@ -1,12 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-toolbar
-        dense
-      >
-        <v-toolbar-title>Dinamics365</v-toolbar-title>
-      </v-toolbar>
-      <v-container fluid>
+      <v-container fluid pa-0>
         <Nuxt />
       </v-container>
     </v-main>

@@ -3,7 +3,7 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - dynamics365-exam',
+    titleTemplate: 'dynamics365-exam',
     title: 'dynamics365-exam',
     htmlAttrs: {
       lang: 'en'

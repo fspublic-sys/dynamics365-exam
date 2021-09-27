@@ -20,7 +20,7 @@
           hide-default-footer
         >
           <template v-slot:item.text="props">
-            <div :id="props.item.no" :draggable="true" @dragstart="dragstart(props.item.text)">{{ props.item.text }}</div>
+            <div :id="props.item.no" :draggable="true" @dragstart="dragstart(props.item)">{{ props.item.text }}</div>
           </template>
         </v-data-table>
       </v-card>
@@ -39,7 +39,7 @@
               align="center"
               class="answer-area"
               @dragover="dragover"
-              @drop="drop(props.index)"
+              @drop="drop(props)"
             >
               {{ props.item.answer }}
             </v-row>
@@ -51,10 +51,16 @@
 </template>
 
 <script>
+import store from '../store/store'
+
 export default {
   props: {
     item: {
       type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     }
   },
@@ -85,19 +91,25 @@ export default {
           sortable: false
         }
       ],
-      dragText: '',
+      dragItem: {},
     }
   },
   methods: {
-    dragstart(text) {
-      this.dragText = text
+    dragstart(item) {
+      this.dragItem = item
     },
     dragover(event) {
       event.preventDefault()
     },
-    drop(index) {
-      this.subQuestions[index].answer = this.dragText
-      this.answer[index] = this.dragText
+    drop(props) {
+      this.$set(this.subQuestions[props.index], 'answer', this.dragItem.text)
+      this.answer[props.index] = `${props.item.no}-${this.dragItem.no}`
+      const data = {
+        index: this.index,
+        answer: this.answer,
+        id: this.item.id
+      }
+      store.commit('setAnswer', data)
     }
   }
 }
