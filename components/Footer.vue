@@ -7,6 +7,9 @@
   .next-btn-icon {
     min-width: 20px !important;
   }
+  .jump-menu {
+    background: white;
+  }
 </style>
 
 <template>
@@ -41,6 +44,7 @@
         top
         offset-y
         nudge-top="10"
+        content-class="jump-menu"
         :close-on-content-click="false"
       >
         <template v-slot:activator="{ on, attrs }">

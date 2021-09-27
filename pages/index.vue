@@ -78,7 +78,7 @@ export default {
     },
     jumpTab(tab) {
       const number = Number(tab)
-      if (!isNaN(number) && number < this.items.length && number > 1) {
+      if (!isNaN(number) && number <= this.items.length && number > 0) {
         this.tab = number
         document.getElementsByTagName('html')[0].scrollTop = 0
       }
