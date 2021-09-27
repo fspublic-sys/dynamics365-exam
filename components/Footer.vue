@@ -1,14 +1,17 @@
 
 <style scoped>
   .btn-style {
+    color: white !important;
     opacity: 1 !important;
-    box-shadow: none;
   }
   .next-btn-icon {
     min-width: 20px !important;
   }
   .jump-menu {
     background: white;
+  }
+  .active-btn-style::before {
+    opacity: 0 !important;
   }
 </style>
 
@@ -19,6 +22,7 @@
     <v-btn
       color="primary"
       class="btn-style"
+      depressed
       @click="$emit('prevTab')"
     >
       前の問題
@@ -27,15 +31,17 @@
     <v-btn
       color="success"
       class="btn-style"
+      depressed
       @click="finishAnswer"
     >
       回答確認
     </v-btn>
     <v-spacer></v-spacer>
-    <div class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense">
+    <v-btn-toggle dense active-class="active-btn-style">
       <v-btn
         color="primary"
         class="btn-style"
+        depressed
         @click="$emit('nextTab')"
       >
         次の問題
@@ -50,6 +56,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn
             class="pa-0 btn-style next-btn-icon"
+            depressed
             @click="showTooltip = !showTooltip"
             v-bind="attrs"
             v-on="on"
@@ -72,6 +79,7 @@
             <v-btn
               color="primary"
               class="btn-style"
+              depressed
               @click="$emit('jumpTab', questionNo)"
             >
               移動
@@ -79,7 +87,7 @@
           </v-col>
         </v-row>
       </v-menu>
-    </div>
+    </v-btn-toggle>
   </v-footer>
 </template>
 
@@ -89,6 +97,11 @@ export default {
     return {
       showTooltip: false,
       questionNo: undefined
+    }
+  },
+  watch: {
+    showTooltip() {
+      this.questionNo = undefined
     }
   },
   methods: {
