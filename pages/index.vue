@@ -1,87 +1,94 @@
 <template>
-  <div>
-    <v-toolbar
-      dense
+  <div class="pa-3">
+    <v-row
+      no-gutters
+      class="mb-3"
     >
-      <v-toolbar-title>Dinamics365 MB-300過去問</v-toolbar-title>
-    </v-toolbar>
-    <v-row justify="center" align="center" class="pa-3">
-      <v-col cols="12">
-        <v-tabs-items v-model="tab">
-          <v-tab-item
-            v-for="item, index in items"
-            :key="item.id"
-            :value="index + 1"
-          >
-            <v-card outlined>
-              <v-card-title>問題{{ index + 1 }}</v-card-title>
-              <v-card-text style="white-space: break-spaces;">{{ item.question }}</v-card-text>
-            </v-card>
-            <v-card flat style="margin-top: 20px;">
-              <component
-                :is="getChoicesType(item.choices_type)"
-                :item="item"
-                :index="index"
-              ></component>
-            </v-card>
-          </v-tab-item>
-        </v-tabs-items>
+      <v-col
+        cols="12"
+        align="center"
+      >
+        Dynamics365　過去問勉強ツール
       </v-col>
-      <v-col cols="12">
-        <Footer @nextTab="nextTab" @prevTab="prevTab" @jumpTab="jumpTab" />
+    </v-row>
+    <v-row
+      no-gutters
+      justify="center"
+      class="mb-3"
+    >
+      <v-col cols="4">
+        <v-select
+          v-model="choiseFile"
+          :items="files"
+          dense
+          hide-details
+          outlined
+          label="試験を選択"
+        ></v-select>
+      </v-col>
+    </v-row>
+    <v-row
+      no-gutters
+      justify="center"
+      class="mb-3"
+    >
+      <v-col
+        cols="12"
+        align="center"
+      >
+        <v-btn
+          color="primary"
+          depressed
+          :disabled="!choiseFile"
+          to="question"
+          @click="setExamFile"
+        >
+          試験を開始
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row
+      no-gutters
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        align="center"
+      >
+        <v-btn
+          color="primary"
+          depressed
+          :disabled="!choiseFile || !strage"
+          to="analysis"
+          @click="setExamFile"
+        >
+          分析する
+        </v-btn>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import MultiChoices from '~/components/MultiChoices.vue'
-import SoloChoices from '~/components/SoloChoices.vue'
-import HotSpotChoices from '~/components/HotSpotChoices.vue'
-import DragDropChoices from '~/components/DragDropChoices.vue'
-import Footer from '~/components/Footer.vue'
-import exam from '../json/exam.json'
+import axios from 'axios'
+import store from '../store/store'
 
 export default {
-  components: { SoloChoices, MultiChoices, HotSpotChoices, DragDropChoices, Footer },
   data () {
     return {
-      tab: 1,
-      items: exam,
-      answer: []
+      choiseFile: '',
+      files: [],
+      strage: null
     }
   },
+  async mounted() {
+    this.strage = localStorage.getItem('history')
+    const { data } = await axios.get('/api/get-json-file')
+    this.files = data
+  },
   methods: {
-    getChoicesType(type) {
-      switch(type) {
-        case 'solo':
-          return 'solo-choices'
-        case 'multi':
-          return 'multi-choices'
-        case 'hotspot':
-          return 'hot-spot-choices'
-        case 'dragdrop':
-          return 'drag-drop-choices'
-      }
-    },
-    nextTab() {
-      if (this.tab < this.items.length) {
-        this.tab++
-        document.getElementsByTagName('html')[0].scrollTop = 0
-      }
-    },
-    prevTab() {
-      if (this.tab > 1) {
-        this.tab--
-        document.getElementsByTagName('html')[0].scrollTop = 0
-      }
-    },
-    jumpTab(tab) {
-      const number = Number(tab)
-      if (!isNaN(number) && number <= this.items.length && number > 0) {
-        this.tab = number
-        document.getElementsByTagName('html')[0].scrollTop = 0
-      }
+    setExamFile() {
+      store.commit('setExamFile', this.choiseFile)
     }
   }
 }

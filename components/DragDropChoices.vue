@@ -84,7 +84,7 @@ export default {
           sortable: false
         },
         {
-          text: '回答',
+          text: '解答',
           align: 'start',
           value: 'answer',
           width: '30%',

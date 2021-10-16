@@ -32,9 +32,9 @@
       color="success"
       class="btn-style"
       depressed
-      @click="finishAnswer"
+      to="answer"
     >
-      回答確認
+      解答確認
     </v-btn>
     <v-spacer></v-spacer>
     <v-btn-toggle dense active-class="active-btn-style">
@@ -105,9 +105,6 @@ export default {
     }
   },
   methods: {
-    finishAnswer() {
-      this.$router.push({ path: 'answer' })
-    }
   }
 }
 </script>
