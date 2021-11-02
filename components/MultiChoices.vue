@@ -53,7 +53,7 @@ export default {
   },
   watch: {
     answer() {
-      if (!this.result) {
+      if (this.result) {
         return
       }
       const data = {

@@ -50,7 +50,7 @@ export default {
   },
   watch: {
     answer() {
-      if (!this.result) {
+      if (this.result) {
         return
       }
       const data = {
@@ -58,7 +58,6 @@ export default {
         answer: [this.answer],
         id: this.item.id
       }
-      console.log(store)
       store.commit('setAnswer', data)
     }
   },
