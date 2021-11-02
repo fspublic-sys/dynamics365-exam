@@ -11,13 +11,15 @@ router.use((req, res, next) => {
   next()
 })
 
+const jsonFolderPath = process.env.JSON_FOLDER_PATH || './json'
+
 router.get('/api/get-json-file', ({}, res) => {
-  fs.readdir('./json', (err, files) => {
+  fs.readdir(jsonFolderPath, (err, files) => {
     if (err) {
       throw err
     }
     const fileList = files.filter(file => {
-      return fs.statSync(`./json/${file}`).isFile() && /.*\.json$/.test(file)
+      return fs.statSync(`${jsonFolderPath}/${file}`).isFile() && /.*\.json$/.test(file)
     }).map(file => {
       return {
         value: file,
