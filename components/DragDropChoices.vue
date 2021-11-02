@@ -5,6 +5,12 @@
   .answer-area {
     height: 100%;
   }
+  .result {
+    background: lightgreen;
+  }
+  .ng {
+    background: lightcoral;
+  }
 </style>
 
 <template>
@@ -20,7 +26,7 @@
           hide-default-footer
         >
           <template v-slot:item.text="props">
-            <div :id="props.item.no" :draggable="true" @dragstart="dragstart(props.item)">{{ props.item.text }}</div>
+            <div :id="props.item.no" :draggable="!item.resultFlg" @dragstart="dragstart(props.item)">{{ props.item.text }}</div>
           </template>
         </v-data-table>
       </v-card>
@@ -41,7 +47,12 @@
               @dragover="dragover"
               @drop="drop(props)"
             >
-              {{ props.item.answer }}
+              <v-col cols="12">{{ props.item.answer }}</v-col>
+              <v-col
+                v-if="item.resultFlg"
+                cols="12"
+                :class="props.item.answerFlg ? 'result' : 'ng'"
+              >{{ showAnswer(props) }}</v-col>
             </v-row>
           </template>
         </v-data-table>
@@ -62,6 +73,11 @@ export default {
     index: {
       type: Number,
       required: true,
+    },
+    result: {
+      type: Array,
+      require: false,
+      default: undefined,
     }
   },
   data () {
@@ -94,6 +110,17 @@ export default {
       dragItem: {},
     }
   },
+  created() {
+    if (!this.result) {
+      return
+    }
+    const answer = this.result
+    for (let i = 0; i < answer.length; i++) {
+      const answerNo = Number(answer[i].split('-')[1])
+      const coice = this.item.choices.find(coice => coice.no === answerNo)
+      this.$set(this.subQuestions[i], 'answer', coice.text)
+    }
+  },
   methods: {
     dragstart(item) {
       this.dragItem = item
@@ -110,6 +137,13 @@ export default {
         id: this.item.id
       }
       store.commit('setAnswer', data)
+    },
+    showAnswer(props) {
+      const answer = this.item.answer
+      const targetChoicesNo = answer[props.item.no - 1].split('-')[1]
+      const targetAnswer = this.item.choices.find(choice => choice.no === Number(targetChoicesNo))
+      this.$set(this.subQuestions[props.index], 'answerFlg', props.item.answer === targetAnswer.text)
+      return targetAnswer.text
     }
   }
 }

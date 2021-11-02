@@ -1,13 +1,22 @@
+<style scoped>
+  .result {
+    background: lightgreen;
+  }
+  .ng {
+    background: lightcoral;
+  }
+</style>
 <template>
   <v-row no-gutters>
     <v-col cols="12">
       <v-card outlined class="pl-2">
-        <v-radio-group v-model="answer">
+        <v-radio-group v-model="answer" :readonly="item.resultFlg">
           <v-radio
             v-for="choices in item.choices"
             :key="choices.no"
             :label="choices.text"
             :value="choices.no"
+            :class="item.resultFlg && item.answer.indexOf(choices.no) >= 0 ? answer === choices.no ? 'result' : 'ng' : ''"
           ></v-radio>
         </v-radio-group>
       </v-card>
@@ -27,6 +36,11 @@ export default {
     index: {
       type: Number,
       required: true,
+    },
+    result: {
+      type: Array,
+      require: false,
+      default: undefined,
     }
   },
   data () {
@@ -36,6 +50,9 @@ export default {
   },
   watch: {
     answer() {
+      if (!this.result) {
+        return
+      }
       const data = {
         index: this.index,
         answer: [this.answer],
@@ -43,6 +60,13 @@ export default {
       }
       store.commit('setAnswer', data)
     }
+  },
+  created() {
+    if (!this.result) {
+      return
+    }
+    const answer = this.result[0]
+    this.answer = answer
   }
 }
 </script>

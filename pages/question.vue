@@ -15,6 +15,15 @@
       class="header-style"
     >
       <v-toolbar-title>Dinamics365 {{ examFile }}過去問</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="success"
+        class="btn-style"
+        depressed
+        :to="{ path: 'answer', query: { exam: $route.query.exam }}"
+      >
+        終了する
+      </v-btn>
     </v-toolbar>
     <v-row justify="center" align="center" class="pa-3 pt-15">
       <v-col cols="12">
@@ -22,7 +31,7 @@
           <v-tab-item
             v-for="item, index in items"
             :key="item.id"
-            :value="index + 1"
+            :value="item.id"
           >
             <v-card outlined>
               <v-card-title>問題{{ index + 1 }}</v-card-title>
@@ -39,7 +48,7 @@
         </v-tabs-items>
       </v-col>
       <v-col cols="12">
-        <Footer @nextTab="nextTab" @prevTab="prevTab" @jumpTab="jumpTab" />
+        <Footer @nextTab="nextTab" @prevTab="prevTab" @jumpTab="jumpTab" @resultAnswer="resultAnswer" />
       </v-col>
     </v-row>
   </div>
@@ -51,7 +60,6 @@ import SoloChoices from '~/components/SoloChoices.vue'
 import HotSpotChoices from '~/components/HotSpotChoices.vue'
 import DragDropChoices from '~/components/DragDropChoices.vue'
 import Footer from '~/components/Footer.vue'
-import store from '../store/store'
 
 export default {
   components: { SoloChoices, MultiChoices, HotSpotChoices, DragDropChoices, Footer },
@@ -60,12 +68,12 @@ export default {
       tab: 1,
       items: [],
       answer: [],
-      examFile: store.state.examFile.replace('.json', '')
+      examFile: this.$route.query.exam.replace('.json', '')
     }
   },
   created() {
     try {
-      this.items = require('../json/' + store.state.examFile)
+      this.items = require(`../json/${this.$route.query.exam}`)
     } catch(err) {}
   },
   methods: {
@@ -99,6 +107,10 @@ export default {
         this.tab = number
         document.getElementsByTagName('html')[0].scrollTop = 0
       }
+    },
+    resultAnswer() {
+      const index = this.items.findIndex(item => item.id === this.tab)
+      this.$set(this.items[index], 'resultFlg', true)
     }
   }
 }

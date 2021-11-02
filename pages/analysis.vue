@@ -24,6 +24,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: calc(100% - 24px);
+    float: left;
   }
   .grades-color-1 {
     color: red;
@@ -34,6 +36,15 @@
 </style>
 <template>
   <div>
+    <v-row no-gutters class="ma-3">
+      <v-btn
+        color="primary"
+        depressed
+        to="/"
+      >
+        トップへ戻る
+      </v-btn>
+    </v-row>
     <v-checkbox
       v-model="excludeUnanswered"
       dense
@@ -58,6 +69,7 @@
       >
         <template v-slot:item.question="props">
           <div class="text-ellipsis">{{ props.item.question }}</div>
+          <question-dialog :id="props.item.id" :question="props.item.question" />
         </template>
         <template v-slot:item.correctRate="props">
           <div v-if="props.item.correctRate < 0">-</div>
@@ -97,13 +109,15 @@
           >
             <template v-slot:item.question="props">
               <div class="text-ellipsis">{{ props.item.question }}</div>
+              <question-dialog :id="props.item.id" :question="props.item.question" />
             </template>
             <template v-slot:item.grades="props">
-              <div
+              <span
                 :class="'grades-color-' + props.item.grades"
               >
                 {{ getGrades(props.item.grades) }}
-              </div>
+              </span>
+              <answer-dialog v-if="props.item.grades !== 0" :item="props.item" />
             </template>
           </v-data-table>
         </v-col>
@@ -124,6 +138,7 @@
               >
                 <template v-slot:item.question="props">
                   <div class="text-ellipsis">{{ props.item.question }}</div>
+                  <question-dialog :id="props.item.id" :question="props.item.question" />
                 </template>
               </v-data-table>
             </v-col>
@@ -136,16 +151,19 @@
 
 <script>
 import { historyType } from '../constants/constants'
-import store from '../store/store'
+import QuestionDialog from '~/components/QuestionDialog.vue'
+import AnswerDialog from '~/components/AnswerDialog.vue'
+
 const UNANSWERED = historyType.UNANSWERED
 const CORRECT_ANSWER = historyType.CORRECT_ANSWER
 const INCORRECT_ANSWER = historyType.INCORRECT_ANSWER
 
 export default {
+  components: { QuestionDialog, AnswerDialog },
   data () {
     return {
       items: [],
-      excludeUnanswered: false,
+      excludeUnanswered: true,
       allAnalysisItems: [],
       allAnalysisHeaders: [
         {
@@ -213,21 +231,7 @@ export default {
           value: 'grades',
           sortable: true,
           filter: this.targetFilterUnanswered
-        },
-        {
-          text: '模範解答',
-          align: 'end',
-          value: 'modelAnswer',
-          width: '10%',
-          sortable: false
-        },
-        {
-          text: '解答',
-          align: 'end',
-          value: 'answer',
-          width: '10%',
-          sortable: false
-        },
+        }
       ],
       pastCorrectAnalysisHeaders: [
         {
@@ -259,7 +263,7 @@ export default {
   },
   created() {
     try {
-      this.items = require('../json/' + store.state.examFile)
+      this.items = require(`../json/${this.$route.query.exam}`)
     } catch(err) {}
   },
   mounted() {
@@ -330,8 +334,9 @@ export default {
         this.targetAnalysisItems.push({
           id: item.id,
           question: item.question,
+          choicesType: item.choices_type,
+          item: Object.assign(item, { resultFlg: true }),
           grades: historyType,
-          modelAnswer: historyType === UNANSWERED ? '-' : item.answer,
           answer: historyType === UNANSWERED ? '-' : answer
         })
       }

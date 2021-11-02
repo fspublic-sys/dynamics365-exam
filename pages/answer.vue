@@ -26,7 +26,7 @@
       <v-btn
         color="primary"
         depressed
-        to="analysis"
+        :to="{ path: 'analysis', query: { exam: $route.query.exam }}"
       >
         分析する
       </v-btn>
@@ -63,7 +63,7 @@ export default {
   },
   created() {
     try {
-      this.items = require('../json/' + store.state.examFile)
+      this.items = require(`../json/${this.$route.query.exam}`)
     } catch(err) {}
   },
   mounted() {

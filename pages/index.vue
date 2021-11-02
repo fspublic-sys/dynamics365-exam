@@ -40,8 +40,7 @@
           color="primary"
           depressed
           :disabled="!choiseFile"
-          to="question"
-          @click="setExamFile"
+          :to="{ path: 'question', query: { exam: choiseFile }}"
         >
           試験を開始
         </v-btn>
@@ -59,8 +58,7 @@
           color="primary"
           depressed
           :disabled="!choiseFile || !strage"
-          to="analysis"
-          @click="setExamFile"
+          :to="{ path: 'analysis', query: { exam: choiseFile }}"
         >
           分析する
         </v-btn>
@@ -71,7 +69,6 @@
 
 <script>
 import axios from 'axios'
-import store from '../store/store'
 
 export default {
   data () {
@@ -85,11 +82,6 @@ export default {
     this.strage = localStorage.getItem('history')
     const { data } = await axios.get('/api/get-json-file')
     this.files = data
-  },
-  methods: {
-    setExamFile() {
-      store.commit('setExamFile', this.choiseFile)
-    }
   }
 }
 </script>

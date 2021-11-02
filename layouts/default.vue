@@ -1,3 +1,11 @@
+<style>
+  .v-menu__content .v-list-item__title {
+    text-overflow: unset !important;
+    word-break: break-all;
+    white-space: normal !important;
+  }
+</style>
+
 <template>
   <v-app>
     <v-main>

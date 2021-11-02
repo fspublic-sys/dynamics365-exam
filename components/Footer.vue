@@ -32,7 +32,7 @@
       color="success"
       class="btn-style"
       depressed
-      to="answer"
+      @click="$emit('resultAnswer')"
     >
       解答確認
     </v-btn>
