@@ -14,6 +14,7 @@ router.use((req, res, next) => {
 const jsonFolderPath = process.env.JSON_FOLDER_PATH || './json'
 
 router.get('/api/get-json-file', ({}, res) => {
+  console.log(process.cwd())
   fs.readdir(jsonFolderPath, (err, files) => {
     if (err) {
       throw err
