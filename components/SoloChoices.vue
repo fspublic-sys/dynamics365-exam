@@ -58,6 +58,7 @@ export default {
         answer: [this.answer],
         id: this.item.id
       }
+      console.log(store)
       store.commit('setAnswer', data)
     }
   },
