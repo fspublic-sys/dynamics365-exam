@@ -335,7 +335,7 @@ export default {
           id: item.id,
           question: item.question,
           choicesType: item.choices_type,
-          item: Object.assign(item, { resultFlg: true }),
+          item: Object.assign({}, item, { resultFlg: true }),
           grades: historyType,
           answer: historyType === UNANSWERED ? '-' : answer
         })
