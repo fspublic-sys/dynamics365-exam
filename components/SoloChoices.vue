@@ -10,13 +10,13 @@
   <v-row no-gutters>
     <v-col cols="12">
       <v-card outlined class="pl-2">
-        <v-radio-group v-model="answer" :readonly="item.resultFlg">
+        <v-radio-group v-model="answer" :readonly="resultFlg">
           <v-radio
             v-for="choices in item.choices"
             :key="choices.no"
             :label="choices.text"
             :value="choices.no"
-            :class="item.resultFlg && item.answer.indexOf(choices.no) >= 0 ? answer === choices.no ? 'result' : 'ng' : ''"
+            :class="resultFlg && item.answer.indexOf(choices.no) >= 0 ? answer === choices.no ? 'result' : 'ng' : ''"
           ></v-radio>
         </v-radio-group>
       </v-card>
@@ -41,6 +41,11 @@ export default {
       type: Array,
       require: false,
       default: undefined,
+    },
+    resultFlg: {
+      type: Boolean,
+      require: false,
+      default: false,
     }
   },
   data () {

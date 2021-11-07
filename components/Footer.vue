@@ -88,11 +88,23 @@
         </v-row>
       </v-menu>
     </v-btn-toggle>
+    <ConfirmDialog ref="dialog" @execute="execute">
+      <template v-slot:title>
+        終了確認
+      </template>
+      <template v-slot:message>
+        <div>最後の問題が完了しました。</div>
+        <div>試験を終了し解答確認画面へ移動しますか？</div>
+      </template>
+    </ConfirmDialog>
   </v-footer>
 </template>
 
 <script>
+import ConfirmDialog from '~/components/ConfirmDialog.vue'
+
 export default {
+  components: { ConfirmDialog },
   data () {
     return {
       showTooltip: false,
@@ -105,6 +117,15 @@ export default {
     }
   },
   methods: {
+    execute() {
+      this.$router.push({ path: 'answer', query: { exam: this.$route.query.exam }})
+    },
+    changeDialogFlg(flg) {
+      const dialog = this.$refs.dialog
+      if (dialog) {
+        dialog.changeDialogFlg(flg)
+      }
+    }
   }
 }
 </script>

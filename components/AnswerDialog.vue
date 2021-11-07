@@ -22,6 +22,7 @@
           :item="item.item"
           :index="item.id"
           :result="item.answer"
+          :resultFlg="resultFlg"
         ></component>
       </v-card-text>
     </v-card>
@@ -40,6 +41,11 @@ export default {
     item: {
       type: Object,
       required: true
+    },
+    resultFlg: {
+      type: Boolean,
+      require: false,
+      default: false,
     }
   },
   data () {

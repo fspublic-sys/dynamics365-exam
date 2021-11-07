@@ -21,18 +21,18 @@
           </v-col>
           <v-col cols="6" class="py-2">
             <v-select
-              v-model="choice.answer"
+              v-model="selected[choice.no - 1]"
               :items="choice.custom_choices"
-              :readonly="item.resultFlg"
+              :readonly="resultFlg"
               item-text="text"
               item-value="no"
               outlined
               dense
               hide-details
-              @change="changeItem($event, choice.no, index)"
+              @change="changeItem($event, choice.no)"
             ></v-select>
             <div
-              v-if="item.resultFlg"
+              v-if="resultFlg"
               :class="choice.answerFlg ? 'result' : 'ng'"
             >
               {{ showAnswer(choice) }}
@@ -61,11 +61,17 @@ export default {
       type: Array,
       require: false,
       default: undefined,
+    },
+    resultFlg: {
+      type: Boolean,
+      require: false,
+      default: false,
     }
   },
   data () {
     return {
       answer: [],
+      selected: [],
       choices: this.item.choices,
     }
   },
@@ -73,15 +79,12 @@ export default {
     if (!this.result) {
       return
     }
-    const answer = this.result
-    for (let i = 0; i < answer.length; i++) {
-      this.$set(this.choices[i], 'answer', Number(answer[i].split('-')[1]))
-    }
+    this.answer = this.result
+    this.selected = this.answer.map(data => Number(data.split('-')[1]))
   },
   methods: {
-    changeItem(event, no, index) {
-      this.$set(this.choices[index], 'answer', event)
-      this.answer[index] = `${no}-${event}`
+    changeItem(event, no) {
+      this.$set(this.answer, no - 1, `${no}-${event}`)
       const data = {
         index: this.index,
         answer: this.answer,
@@ -93,7 +96,14 @@ export default {
       const answer = this.item.answer
       const targetChoicesNo = answer[choices.no - 1].split('-')[1]
       const targetAnswer = choices.custom_choices.find(choice => choice.no === Number(targetChoicesNo))
-      this.$set(this.choices[choices.no - 1], 'answerFlg', this.choices[choices.no - 1].answer === Number(targetChoicesNo))
+
+      const target = this.answer[choices.no - 1]
+      if (target) {
+        const targeNo = target.split('-')[1]
+        this.$set(this.choices[choices.no - 1], 'answerFlg', targeNo === targetChoicesNo)
+      } else {
+        this.$set(this.choices[choices.no - 1], 'answerFlg', false)
+      }
       return targetAnswer.text
     }
   }

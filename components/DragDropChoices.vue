@@ -26,7 +26,7 @@
           hide-default-footer
         >
           <template v-slot:item.text="props">
-            <div :id="props.item.no" :draggable="!item.resultFlg" @dragstart="dragstart(props.item)">{{ props.item.text }}</div>
+            <div :id="props.item.no" :draggable="!resultFlg" @dragstart="dragstart(props.item)">{{ props.item.text }}</div>
           </template>
         </v-data-table>
       </v-card>
@@ -47,9 +47,9 @@
               @dragover="dragover"
               @drop="drop(props)"
             >
-              <v-col cols="12">{{ props.item.answer }}</v-col>
+              <v-col cols="12">{{ getAnswerText(props) }}</v-col>
               <v-col
-                v-if="item.resultFlg"
+                v-if="resultFlg"
                 cols="12"
                 :class="props.item.answerFlg ? 'result' : 'ng'"
               >{{ showAnswer(props) }}</v-col>
@@ -78,6 +78,11 @@ export default {
       type: Array,
       require: false,
       default: undefined,
+    },
+    resultFlg: {
+      type: Boolean,
+      require: false,
+      default: false,
     }
   },
   data () {
@@ -114,12 +119,20 @@ export default {
     if (!this.result) {
       return
     }
-    const answer = this.result
-    for (let i = 0; i < answer.length; i++) {
-      const answerNo = Number(answer[i].split('-')[1])
-      const coice = this.item.choices.find(coice => coice.no === answerNo)
-      this.$set(this.subQuestions[i], 'answer', coice.text)
-    }
+    this.answer = this.result
+  },
+  computed: {
+    getAnswerText() {
+      return (props) => {
+        const answer = this.answer[props.index]
+        if (answer) {
+          const ids = answer.split('-')
+          const target = this.item.choices.find(choice => choice.no === Number(ids[1]))
+          return target.text
+        }
+        return ''
+      }
+    },
   },
   methods: {
     dragstart(item) {
@@ -129,8 +142,7 @@ export default {
       event.preventDefault()
     },
     drop(props) {
-      this.$set(this.subQuestions[props.index], 'answer', this.dragItem.text)
-      this.answer[props.index] = `${props.item.no}-${this.dragItem.no}`
+      this.$set(this.answer, props.index, `${props.item.no}-${this.dragItem.no}`)
       const data = {
         index: this.index,
         answer: this.answer,
@@ -140,9 +152,16 @@ export default {
     },
     showAnswer(props) {
       const answer = this.item.answer
-      const targetChoicesNo = answer[props.item.no - 1].split('-')[1]
+      const targetChoicesNo = answer[props.index].split('-')[1]
       const targetAnswer = this.item.choices.find(choice => choice.no === Number(targetChoicesNo))
-      this.$set(this.subQuestions[props.index], 'answerFlg', props.item.answer === targetAnswer.text)
+
+      const target = this.answer[props.index]
+      if (target) {
+        const targeNo = target.split('-')[1]
+        this.$set(this.subQuestions[props.index], 'answerFlg', targeNo === targetChoicesNo)
+      } else {
+        this.$set(this.subQuestions[props.index], 'answerFlg', false)
+      }
       return targetAnswer.text
     }
   }

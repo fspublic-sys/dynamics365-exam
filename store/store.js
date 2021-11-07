@@ -10,6 +10,9 @@ const store = new Vuex.Store({
   mutations: {
     setAnswer(state, data) {
       state.answer[data.index] = data
+    },
+    resetAnswer(state) {
+      state.answer = []
     }
   }
 })

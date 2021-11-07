@@ -17,10 +17,10 @@
       <v-toolbar-title>Dinamics365 {{ examFile }}過去問</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
-        color="success"
+        color="primary"
         class="btn-style"
         depressed
-        :to="{ path: 'answer', query: { exam: $route.query.exam }}"
+        @click="finish"
       >
         終了する
       </v-btn>
@@ -40,17 +40,26 @@
             <v-card flat style="margin-top: 20px;">
               <component
                 :is="getChoicesType(item.choices_type)"
-                :item="item"
+                :item="Object.assign({}, item)"
                 :index="index"
+                :resultFlg="resultAnswerIds.indexOf(item.id) >= 0"
               ></component>
             </v-card>
           </v-tab-item>
         </v-tabs-items>
       </v-col>
       <v-col cols="12">
-        <Footer @nextTab="nextTab" @prevTab="prevTab" @jumpTab="jumpTab" @resultAnswer="resultAnswer" />
+        <Footer ref="footer" @nextTab="nextTab" @prevTab="prevTab" @jumpTab="jumpTab" @resultAnswer="resultAnswer" />
       </v-col>
     </v-row>
+    <ConfirmDialog ref="dialog" @execute="execute">
+      <template v-slot:title>
+        終了確認
+      </template>
+      <template v-slot:message>
+        <div>試験を終了し解答確認画面へ移動しますか？</div>
+      </template>
+    </ConfirmDialog>
   </div>
 </template>
 
@@ -60,20 +69,51 @@ import SoloChoices from '~/components/SoloChoices.vue'
 import HotSpotChoices from '~/components/HotSpotChoices.vue'
 import DragDropChoices from '~/components/DragDropChoices.vue'
 import Footer from '~/components/Footer.vue'
+import ConfirmDialog from '~/components/ConfirmDialog.vue'
+import { historyType } from '../constants/constants'
+
+const CORRECT_ANSWER = historyType.CORRECT_ANSWER
+const INCORRECT_ANSWER = historyType.INCORRECT_ANSWER
 
 export default {
-  components: { SoloChoices, MultiChoices, HotSpotChoices, DragDropChoices, Footer },
+  components: { SoloChoices, MultiChoices, HotSpotChoices, DragDropChoices, Footer, ConfirmDialog },
   data () {
     return {
       tab: 1,
+      questionCnt: 0,
+      displayIds: [],
       items: [],
       answer: [],
-      examFile: this.$route.query.exam.replace('.json', '')
+      examFile: this.$route.query.exam.replace('.json', ''),
+      resultAnswerIds: []
     }
   },
   created() {
     try {
       this.items = require(`../json/${this.$route.query.exam}`)
+      const type = this.$route.query.type
+      if (type && type === 'weak') {
+        const storage = JSON.parse(localStorage.getItem('history'))
+        if (!storage) {
+          return
+        }
+        let correctAnswer = []
+        let incorrectAnswer = []
+        for (let i = 0; i < storage.length; i++) {
+          const history = Object.values(storage[i])[0]
+          correctAnswer = correctAnswer.concat(history[CORRECT_ANSWER])
+          incorrectAnswer = incorrectAnswer.concat(history[INCORRECT_ANSWER])
+        }
+        this.items = this.items.filter(item => {
+          const correctCount = correctAnswer.filter(correct => correct === item.id).length
+          const incorrectCount = incorrectAnswer.filter(incorrect => incorrect.id === item.id).length
+          let correctRate = (correctCount / (correctCount + incorrectCount)) * 100
+          correctRate = isNaN(correctRate) ? -1 : correctRate
+          return correctRate !== -1 && correctRate <= 50
+        })
+      }
+      this.displayIds = this.items.map(item => item.id)
+      this.tab = this.displayIds[this.questionCnt]
     } catch(err) {}
   },
   methods: {
@@ -90,27 +130,43 @@ export default {
       }
     },
     nextTab() {
-      if (this.tab < this.items.length) {
-        this.tab++
+      if (this.questionCnt < this.displayIds.length - 1) {
+        this.questionCnt++
+        this.tab = this.displayIds[this.questionCnt]
         document.getElementsByTagName('html')[0].scrollTop = 0
+      } else {
+        const footer = this.$refs.footer
+        if (footer) {
+          footer.changeDialogFlg(true)
+        }
       }
     },
     prevTab() {
-      if (this.tab > 1) {
-        this.tab--
+      if (this.questionCnt > 0) {
+        this.questionCnt--
+        this.tab = this.displayIds[this.questionCnt]
         document.getElementsByTagName('html')[0].scrollTop = 0
       }
     },
     jumpTab(tab) {
       const number = Number(tab)
       if (!isNaN(number) && number <= this.items.length && number > 0) {
-        this.tab = number
+        this.questionCnt = number - 1
+        this.tab = this.displayIds[number - 1]
         document.getElementsByTagName('html')[0].scrollTop = 0
       }
     },
     resultAnswer() {
-      const index = this.items.findIndex(item => item.id === this.tab)
-      this.$set(this.items[index], 'resultFlg', true)
+      this.resultAnswerIds.push(this.tab)
+    },
+    finish() {
+      const dialog = this.$refs.dialog
+      if (dialog) {
+        dialog.changeDialogFlg(true)
+      }
+    },
+    execute() {
+      this.$router.push({ path: 'answer', query: { exam: this.$route.query.exam }})
     }
   }
 }

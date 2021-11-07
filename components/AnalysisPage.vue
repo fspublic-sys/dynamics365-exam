@@ -33,6 +33,12 @@
   .grades-color-2 {
     color: blue;
   }
+  .target-analysis-total-data >>> .col {
+    padding: 8px;
+  }
+  .target-analysis-total-data >>> .total-header {
+    background: lightgray;    
+  }
 </style>
 <template>
   <div>
@@ -57,7 +63,7 @@
         class="pa-2"
         style="border-bottom: 1px solid rgba(0, 0, 0, 0.12)"
       >
-        累計分析
+        累計結果
       </v-card-title>
       <v-data-table
         v-if="allAnalysisItems.length"
@@ -82,7 +88,7 @@
         class="pa-2"
         style="border-bottom: 1px solid rgba(0, 0, 0, 0.12)"
       >
-        実施時間別分析
+        実施時間別結果
       </v-card-title>
       <v-row no-gutters>
         <v-col cols="4">
@@ -97,7 +103,30 @@
           </v-select>
         </v-col>
       </v-row>
-      <v-row no-gutters>
+      <v-card
+        outlined
+        class="ma-2"
+      >
+        <v-row
+          no-gutters
+          class="target-analysis-total-data"
+        >
+          <v-col cols="2" class="total-header">正解数</v-col>
+          <v-col cols="2" align="end">{{ targetCorrectCount }}</v-col>
+          <v-col cols="2" class="total-header">不正解数</v-col>
+          <v-col cols="2" align="end">{{ targetIncorrectCount }}</v-col>
+          <v-col cols="2" class="total-header">正解率</v-col>
+          <v-col
+            v-if="calcCorrectRate(targetCorrectCount, targetIncorrectCount) >= 0"
+            cols="2"
+            align="end"
+          >
+            {{ calcCorrectRate(targetCorrectCount, targetIncorrectCount).toFixed(1) }}%
+          </v-col>
+          <v-col v-else cols="2" align="end">-</v-col>
+        </v-row>
+      </v-card>
+      <v-row no-gutters class="mt-2">
         <v-col cols="12">
           <v-data-table
             v-if="targetAnalysisItems.length"
@@ -117,7 +146,7 @@
               >
                 {{ getGrades(props.item.grades) }}
               </span>
-              <answer-dialog v-if="props.item.grades !== 0" :item="props.item" />
+              <answer-dialog v-if="props.item.grades !== 0" :item="props.item" :resultFlg="true" />
             </template>
           </v-data-table>
         </v-col>
@@ -211,6 +240,8 @@ export default {
       target: '',
       targetAnalysisSelects: [],
       targetAnalysisItems: [],
+      targetCorrectCount: 0,
+      targetIncorrectCount: 0,
       targetAnalysisHeaders: [
         {
           text: '問題番号',
@@ -258,6 +289,7 @@ export default {
         return
       }
       this.createTargetAnalysisItems(storage)
+      this.setTargetAnalysisTotalData()
       this.createPastCorrectAnalysisItems(storage)
     }
   },
@@ -288,8 +320,7 @@ export default {
         const item = this.items[i]
         const correctCount = correctAnswer.filter(correct => correct === item.id).length
         const incorrectCount = incorrectAnswer.filter(incorrect => incorrect.id === item.id).length
-        let correctRate = (correctCount / (correctCount + incorrectCount)) * 100
-        correctRate = isNaN(correctRate) ? -1 : correctRate
+        const correctRate = this.calcCorrectRate(correctCount, incorrectCount)
         this.allAnalysisItems.push({
           id: item.id,
           question: item.question,
@@ -298,6 +329,11 @@ export default {
           correctRate: correctRate
         })
       }
+    },
+    calcCorrectRate(correctCount, incorrectCount) {
+      let correctRate = (correctCount / (correctCount + incorrectCount)) * 100
+      correctRate = isNaN(correctRate) ? -1 : correctRate
+      return correctRate
     },
     createTargetAnalysisSelects(storage) {
       for (let i = 0; i < storage.length; i++) {
@@ -335,11 +371,15 @@ export default {
           id: item.id,
           question: item.question,
           choicesType: item.choices_type,
-          item: Object.assign({}, item, { resultFlg: true }),
+          item: item,
           grades: historyType,
           answer: historyType === UNANSWERED ? '-' : answer
         })
       }
+    },
+    setTargetAnalysisTotalData() {
+      this.targetCorrectCount = this.targetAnalysisItems.filter(item => item.grades === CORRECT_ANSWER).length
+      this.targetIncorrectCount = this.targetAnalysisItems.filter(item => item.grades === INCORRECT_ANSWER).length
     },
     createPastCorrectAnalysisItems(storage) {
       this.pastCorrectAnalysisItems = []

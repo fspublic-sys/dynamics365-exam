@@ -40,7 +40,7 @@
           color="primary"
           depressed
           :disabled="!choiseFile"
-          :to="{ path: 'question', query: { exam: choiseFile }}"
+          @click="openDialog"
         >
           試験を開始
         </v-btn>
@@ -58,19 +58,22 @@
           color="primary"
           depressed
           :disabled="!choiseFile || !strage"
-          :to="{ path: 'analysis', query: { exam: choiseFile }}"
+          :to="{ path: 'answer', query: { exam: choiseFile }}"
         >
-          分析する
+          解答履歴を確認
         </v-btn>
       </v-col>
     </v-row>
+    <ModeSelectDialog ref="dialog" :choiseFile="choiseFile" />
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import ModeSelectDialog from '~/components/ModeSelectDialog.vue'
 
 export default {
+  components: { ModeSelectDialog },
   data () {
     return {
       choiseFile: '',
@@ -82,6 +85,14 @@ export default {
     this.strage = localStorage.getItem('history')
     const { data } = await axios.get('/api/get-json-file')
     this.files = data
+  },
+  methods: {
+    openDialog() {
+      const dialog = this.$refs.dialog
+      if (dialog) {
+        dialog.changeDialogFlg(true)
+      }
+    }
   }
 }
 </script>

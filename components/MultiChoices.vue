@@ -16,8 +16,8 @@
           :key="choices.no"
           :label="choices.text"
           :value="choices.no"
-          :readonly="item.resultFlg"
-          :class="item.resultFlg && item.answer.indexOf(choices.no) >= 0 ? answer.indexOf(choices.no) >= 0 ? 'result' : 'ng' : ''"
+          :readonly="resultFlg"
+          :class="resultFlg && item.answer.indexOf(choices.no) >= 0 ? answer.indexOf(choices.no) >= 0 ? 'result' : 'ng' : ''"
           hide-details
           @change="changeItem"
         >
@@ -44,6 +44,11 @@ export default {
       type: Array,
       require: false,
       default: undefined,
+    },
+    resultFlg: {
+      type: Boolean,
+      require: false,
+      default: false,
     }
   },
   data () {
