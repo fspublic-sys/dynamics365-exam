@@ -61,8 +61,9 @@
           color="primary"
           class="btn-style"
           depressed
+          to="/"
         >
-          トップページへ戻る
+          トップへ戻る
         </v-btn>
       </v-col>
     </v-row>
