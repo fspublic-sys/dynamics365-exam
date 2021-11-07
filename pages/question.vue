@@ -20,6 +20,7 @@
         color="primary"
         class="btn-style"
         depressed
+        :disabled="!items.length"
         @click="finish"
       >
         終了する
