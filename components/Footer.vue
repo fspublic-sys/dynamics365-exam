@@ -93,7 +93,7 @@
         終了確認
       </template>
       <template v-slot:message>
-        <div>最後の問題が完了しました。</div>
+        <div>最後の問題の解答が完了しました。</div>
         <div>試験を終了し解答確認画面へ移動しますか？</div>
       </template>
     </ConfirmDialog>
