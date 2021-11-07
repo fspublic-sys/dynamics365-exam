@@ -53,10 +53,10 @@
       </v-col>
     </v-row>
     <v-row v-else no-gutters justify="center" align="center" class="pa-3 pt-15">
-      <v-col cols="12">
+      <v-col cols="12" align="center">
         表示する問題が存在しません
       </v-col>
-      <v-col cols="12">
+      <v-col cols="12" align="center">
         <v-btn
           color="primary"
           class="btn-style"
