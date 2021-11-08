@@ -24,6 +24,7 @@
           hide-details
           outlined
           label="試験を選択"
+          @change="changeFile"
         ></v-select>
       </v-col>
     </v-row>
@@ -82,7 +83,6 @@ export default {
     }
   },
   async mounted() {
-    this.strage = localStorage.getItem('history')
     const { data } = await axios.get('/api/get-json-file')
     this.files = data
   },
@@ -92,6 +92,9 @@ export default {
       if (dialog) {
         dialog.changeDialogFlg(true)
       }
+    },
+    changeFile() {
+      this.strage = localStorage.getItem(`history-${this.choiseFile}`)
     }
   }
 }

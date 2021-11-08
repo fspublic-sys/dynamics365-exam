@@ -151,29 +151,6 @@
           </v-data-table>
         </v-col>
       </v-row>
-      <v-row no-gutters>
-        <v-col v-if="pastCorrectAnalysisItems.length">
-          <v-row no-gutters class="ma-3">
-            <v-col cols="12">
-              ■今回不正解で過去正解した実績のある問題
-            </v-col>
-            <v-col cols="12">
-              <v-data-table
-                :headers="pastCorrectAnalysisHeaders"
-                :items="pastCorrectAnalysisItems"
-                dense
-                fixed-header
-                class="all-analysis-table"
-              >
-                <template v-slot:item.question="props">
-                  <div class="text-ellipsis">{{ props.item.question }}</div>
-                  <question-dialog :id="props.item.id" :question="props.item.question" />
-                </template>
-              </v-data-table>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
     </v-card>
   </div>
 </template>
@@ -263,34 +240,17 @@ export default {
           sortable: true,
           filter: this.targetFilterUnanswered
         }
-      ],
-      pastCorrectAnalysisHeaders: [
-        {
-          text: '問題番号',
-          align: 'start',
-          value: 'id',
-          sortable: true
-        },
-        {
-          text: '問題文',
-          align: 'start',
-          value: 'question',
-          width: '100%',
-          sortable: false
-        },
-      ],
-      pastCorrectAnalysisItems: []
+      ]
     }
   },
   watch: {
     target() {
-      const storage = JSON.parse(localStorage.getItem('history'))
+      const storage = JSON.parse(localStorage.getItem(`history-${this.$route.query.exam}`))
       if (!storage || !this.target) {
         return
       }
       this.createTargetAnalysisItems(storage)
       this.setTargetAnalysisTotalData()
-      this.createPastCorrectAnalysisItems(storage)
     }
   },
   created() {
@@ -299,7 +259,7 @@ export default {
     } catch(err) {}
   },
   mounted() {
-    const storage = JSON.parse(localStorage.getItem('history'))
+    const storage = JSON.parse(localStorage.getItem(`history-${this.$route.query.exam}`))
     if (!storage) {
       return
     }
@@ -380,17 +340,6 @@ export default {
     setTargetAnalysisTotalData() {
       this.targetCorrectCount = this.targetAnalysisItems.filter(item => item.grades === CORRECT_ANSWER).length
       this.targetIncorrectCount = this.targetAnalysisItems.filter(item => item.grades === INCORRECT_ANSWER).length
-    },
-    createPastCorrectAnalysisItems(storage) {
-      this.pastCorrectAnalysisItems = []
-      const postStorage = storage.filter(dateObj => Object.keys(dateObj)[0] < this.target)
-      let postCorrectItemIds = []
-      for (let i = 0; i < postStorage.length; i++) {
-        const history = Object.values(postStorage[i])[0]
-        postCorrectItemIds = postCorrectItemIds.concat(history[CORRECT_ANSWER])
-      }
-      const postCorrectItems = this.targetAnalysisItems.filter(item => item.grades === INCORRECT_ANSWER && postCorrectItemIds.indexOf(item.id) >= 0)
-      this.pastCorrectAnalysisItems = postCorrectItems
     },
     allFilterUnanswered(value) {
       return !(this.excludeUnanswered && value < 0)

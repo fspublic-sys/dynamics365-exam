@@ -78,12 +78,12 @@ export default {
       return answerCheckMode
     },
     setHistory(history) {
-      const storage = JSON.parse(localStorage.getItem('history'))
+      const storage = JSON.parse(localStorage.getItem(`history-${this.$route.query.exam}`))
       if (!storage) {
-        localStorage.setItem('history', JSON.stringify([history]))
+        localStorage.setItem(`history-${this.$route.query.exam}`, JSON.stringify([history]))
       } else {
         storage.push(history)
-        localStorage.setItem('history', JSON.stringify(storage))
+        localStorage.setItem(`history-${this.$route.query.exam}`, JSON.stringify(storage))
       }
     }
   }

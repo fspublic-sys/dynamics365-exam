@@ -27,6 +27,17 @@
       </v-btn>
     </v-toolbar>
     <v-row v-if="items.length > 0" justify="center" align="center" class="pa-3 pt-15">
+      <v-col cols="6" align="end">
+        <v-progress-linear
+          v-model="progressLinear"
+          color="blue-grey"
+          height="25"
+        >
+          <template v-slot:default="{}">
+            <strong>{{questionCnt + 1}}/{{items.length}}</strong>
+          </template>
+        </v-progress-linear>
+      </v-col>
       <v-col cols="12">
         <v-tabs-items v-model="tab">
           <v-tab-item
@@ -101,7 +112,13 @@ export default {
       items: [],
       answer: [],
       examFile: this.$route.query.exam.replace('.json', ''),
-      resultAnswerIds: []
+      resultAnswerIds: [],
+      progressLinear: 0
+    }
+  },
+  watch: {
+    questionCnt() {
+      this.progressLinear = (this.questionCnt + 1) / this.items.length * 100
     }
   },
   created() {
@@ -109,7 +126,7 @@ export default {
       this.items = require(`../json/${this.$route.query.exam}`)
       const type = this.$route.query.type
       if (type && type === 'weak') {
-        const storage = JSON.parse(localStorage.getItem('history'))
+        const storage = JSON.parse(localStorage.getItem(`history-${this.$route.query.exam}`))
         if (!storage) {
           return
         }
@@ -130,6 +147,7 @@ export default {
       }
       this.displayIds = this.items.map(item => item.id)
       this.tab = this.displayIds[this.questionCnt]
+      this.progressLinear = (this.questionCnt + 1) / this.items.length * 100
     } catch(err) {}
   },
   methods: {
