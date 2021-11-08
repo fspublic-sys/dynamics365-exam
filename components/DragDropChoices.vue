@@ -108,7 +108,7 @@ export default {
           text: '解答',
           align: 'start',
           value: 'answer',
-          width: '30%',
+          width: '50%',
           sortable: false
         }
       ],
