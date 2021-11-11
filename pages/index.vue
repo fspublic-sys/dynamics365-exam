@@ -8,7 +8,7 @@
         cols="12"
         align="center"
       >
-        Dynamics365　過去問勉強ツール
+        Microsoft Dynamics 365　過去問勉強ツール
       </v-col>
     </v-row>
     <v-row
@@ -50,6 +50,7 @@
     <v-row
       no-gutters
       justify="center"
+      class="mb-3"
     >
       <v-col
         cols="12"
@@ -65,16 +66,35 @@
         </v-btn>
       </v-col>
     </v-row>
-    <ModeSelectDialog ref="dialog" :choiseFile="choiseFile" />
+    <v-row
+      no-gutters
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        align="center"
+      >
+        <v-btn
+          color="success"
+          depressed
+          @click="setting"
+        >
+          設定
+        </v-btn>
+      </v-col>
+    </v-row>
+    <mode-select-dialog ref="dialog" :choiseFile="choiseFile" />
+    <setting-dialog ref="settingDialog" />
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import ModeSelectDialog from '~/components/ModeSelectDialog.vue'
+import SettingDialog from '~/components/SettingDialog.vue'
 
 export default {
-  components: { ModeSelectDialog },
+  components: { ModeSelectDialog, SettingDialog },
   data () {
     return {
       choiseFile: '',
@@ -95,6 +115,12 @@ export default {
     },
     changeFile() {
       this.strage = localStorage.getItem(`history-${this.choiseFile}`)
+    },
+    setting() {
+      const settingDialog = this.$refs.settingDialog
+      if (settingDialog) {
+        settingDialog.changeDialogFlg(true)
+      }
     }
   }
 }

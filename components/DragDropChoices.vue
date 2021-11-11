@@ -11,6 +11,10 @@
   .ng {
     background: lightcoral;
   }
+  .choices-area {
+    cursor: grab;
+    height: 100%;
+  }
 </style>
 
 <template>
@@ -26,7 +30,7 @@
           hide-default-footer
         >
           <template v-slot:item.text="props">
-            <div :id="props.item.no" :draggable="!resultFlg" @dragstart="dragstart(props.item)">{{ props.item.text }}</div>
+            <v-row :id="props.item.no" class="choices-area" :draggable="!resultFlg" no-gutters align="center" @dragstart="dragstart(props.item)">{{ props.item.text }}</v-row>
           </template>
         </v-data-table>
       </v-card>

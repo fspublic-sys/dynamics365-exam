@@ -14,7 +14,7 @@
       dense
       class="header-style"
     >
-      <v-toolbar-title>Dinamics365 {{ examFile }}過去問</v-toolbar-title>
+      <v-toolbar-title>Microsoft Dynamics 365 {{ examFile }}過去問</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
         color="primary"

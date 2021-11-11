@@ -27,8 +27,9 @@
     >
       前の問題
     </v-btn>
-    <v-spacer></v-spacer>
+    <v-spacer v-if="footerLeftJustified !== '1'"></v-spacer>
     <v-btn
+      v-if="footerLeftJustified !== '1'"
       color="success"
       class="btn-style"
       depressed
@@ -36,8 +37,8 @@
     >
       解答確認
     </v-btn>
-    <v-spacer></v-spacer>
-    <v-btn-toggle dense active-class="active-btn-style">
+    <v-spacer v-if="footerLeftJustified !== '1'"></v-spacer>
+    <v-btn-toggle dense active-class="active-btn-style" :class="footerLeftJustified === '1' ? 'mx-4' : ''">
       <v-btn
         color="primary"
         class="btn-style"
@@ -88,6 +89,15 @@
         </v-row>
       </v-menu>
     </v-btn-toggle>
+    <v-btn
+      v-if="footerLeftJustified === '1'"
+      color="success"
+      class="btn-style"
+      depressed
+      @click="$emit('resultAnswer')"
+    >
+      解答確認
+    </v-btn>
     <ConfirmDialog ref="dialog" @execute="execute">
       <template v-slot:title>
         終了確認
@@ -108,13 +118,17 @@ export default {
   data () {
     return {
       showTooltip: false,
-      questionNo: undefined
+      questionNo: undefined,
+      footerLeftJustified: undefined
     }
   },
   watch: {
     showTooltip() {
       this.questionNo = undefined
     }
+  },
+  mounted() {
+    this.footerLeftJustified = localStorage.getItem('footer-left-justified')
   },
   methods: {
     execute() {
