@@ -25,6 +25,7 @@ export default {
   created() {
     try {
       this.items = require(`../json/${this.$route.query.exam}`)
+      this.items.sort((a, b) => a.id - b.id)
     } catch(err) {}
   },
   mounted() {
