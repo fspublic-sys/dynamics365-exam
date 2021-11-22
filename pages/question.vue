@@ -125,7 +125,7 @@ export default {
     try {
       this.items = require(`../json/${this.$route.query.exam}`)
       const type = this.$route.query.type
-      if (type && type === 'weak') {
+      if (type === 'weak') {
         const storage = JSON.parse(localStorage.getItem(`history-${this.$route.query.exam}`))
         if (!storage) {
           return
@@ -144,6 +144,11 @@ export default {
           correctRate = isNaN(correctRate) ? -1 : correctRate
           return correctRate !== -1 && correctRate <= 50
         })
+      } else if (type === 'shuffle') {
+        const shuffleArray = array => {
+          array.sort(()=> Math.random() - 0.5)
+        }
+        shuffleArray(this.items)
       }
       this.displayIds = this.items.map(item => item.id)
       this.tab = this.displayIds[this.questionCnt]

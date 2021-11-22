@@ -72,11 +72,11 @@ export default {
           name: '通常',
           description: '登録されている過去問を順番通り解いていきます'
         },
-        // {
-        //   type: 'shuffle',
-        //   name: 'シャッフル',
-        //   description: '登録されている過去問をランダムな順番で解いていきます'
-        // },
+        {
+          type: 'shuffle',
+          name: 'シャッフル',
+          description: '登録されている過去問をランダムな順番で解いていきます'
+        },
         {
           type: 'weak',
           name: '苦手克服',
