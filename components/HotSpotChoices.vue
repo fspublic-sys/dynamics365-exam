@@ -11,31 +11,31 @@
     <v-col cols="12">
       <v-card outlined class="px-2">
         <v-row
-          v-for="choice, index in choices"
-          :key="choice.no"
+          v-for="subQuestion in subQuestions"
+          :key="subQuestion.no"
           no-gutters
           align="center"
         >
           <v-col cols="6" class="py-2">
-            {{ choice.text }}
+            {{ subQuestion.text }}
           </v-col>
           <v-col cols="6" class="py-2">
             <v-select
-              v-model="selected[choice.no - 1]"
-              :items="choice.custom_choices"
+              v-model="selected[subQuestion.no - 1]"
+              :items="subQuestion.choices"
               :readonly="resultFlg"
               item-text="text"
               item-value="no"
               outlined
               dense
               hide-details
-              @change="changeItem($event, choice.no)"
+              @change="changeItem($event, subQuestion.no)"
             ></v-select>
             <div
               v-if="resultFlg"
-              :class="choice.answerFlg ? 'result' : 'ng'"
+              :class="subQuestion.answerFlg ? 'result' : 'ng'"
             >
-              {{ showAnswer(choice) }}
+              {{ showAnswer(subQuestion) }}
             </div>
           </v-col>
         </v-row>
@@ -72,7 +72,7 @@ export default {
     return {
       answer: [],
       selected: [],
-      choices: this.item.choices,
+      subQuestions: this.item.sub_questions,
     }
   },
   created() {
@@ -92,17 +92,17 @@ export default {
       }
       store.commit('setAnswer', data)
     },
-    showAnswer(choices) {
+    showAnswer(subQuestion) {
       const answer = this.item.answer
-      const targetChoicesNo = answer[choices.no - 1].split('-')[1]
-      const targetAnswer = choices.custom_choices.find(choice => choice.no === Number(targetChoicesNo))
+      const targetSubQuestionsNo = answer[subQuestion.no - 1].split('-')[1]
+      const targetAnswer = subQuestion.choices.find(choice => choice.no === Number(targetSubQuestionsNo))
 
-      const target = this.answer[choices.no - 1]
+      const target = this.answer[subQuestion.no - 1]
       if (target) {
         const targeNo = target.split('-')[1]
-        this.$set(this.choices[choices.no - 1], 'answerFlg', targeNo === targetChoicesNo)
+        this.$set(this.subQuestions[subQuestion.no - 1], 'answerFlg', targeNo === targetSubQuestionsNo)
       } else {
-        this.$set(this.choices[choices.no - 1], 'answerFlg', false)
+        this.$set(this.subQuestions[subQuestion.no - 1], 'answerFlg', false)
       }
       return targetAnswer.text
     }
