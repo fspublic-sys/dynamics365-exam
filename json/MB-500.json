@@ -170,7 +170,7 @@
     ],
     "answer": [
       2,
-      3
+      4
     ]
   },
   {
@@ -839,7 +839,7 @@
     "answer": [
       "1-4",
       "2-3",
-      "3-6",
+      "3-2",
       "4-5"
     ],
     "sub_questions": [
@@ -968,6 +968,26 @@
     "choices": [
       {
         "no": 1,
+        "text": "Application Platform"
+      },
+      {
+        "no": 2,
+        "text": "Application Suite"
+      },
+      {
+        "no": 3,
+        "text": "Application Foundation"
+      }
+    ],
+    "answer": [
+      "1-3",
+      "2-3",
+      "3-1",
+      "4-1"
+    ],
+    "sub_questions": [
+      {
+        "no": 1,
         "text": "数列"
       },
       {
@@ -981,25 +1001,6 @@
       {
         "no": 4,
         "text": "SSRSレポート"
-      }
-    ],
-    "answer": [
-      "1-3",
-      "2-3",
-      "3-1"
-    ],
-    "sub_questions": [
-      {
-        "no": 1,
-        "text": "Application Platform"
-      },
-      {
-        "no": 2,
-        "text": "Application Suite"
-      },
-      {
-        "no": 3,
-        "text": "Application Foundation"
       }
     ]
   },
