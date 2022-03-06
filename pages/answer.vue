@@ -25,7 +25,19 @@ export default {
   created() {
     try {
       this.items = require(`../json/${this.$route.query.exam}`)
-      this.items.sort((a, b) => a.id - b.id)
+      this.items.sort((a, b) => {
+        switch(item.choices_type) {
+          case 'hotspot':
+            item.sub_questions.forEach(subQuestions => {
+              subQuestions.choices.sort((c, d) => c.no - d.no)
+            })
+            break
+          default:
+            item.choices.sort((c, d) => c.no - d.no)
+            break
+        }
+        return a.id - b.id
+      })
     } catch(err) {}
   },
   mounted() {

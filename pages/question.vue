@@ -146,7 +146,19 @@ export default {
         })
       } else if (type === 'shuffle') {
         const shuffleArray = array => {
-          array.sort(()=> Math.random() - 0.5)
+          array.sort((item) => {
+            switch(item.choices_type) {
+              case 'hotspot':
+                item.sub_questions.forEach(subQuestions => {
+                  subQuestions.choices.sort(() => Math.random() - 0.5)
+                })
+                break
+              default:
+                item.choices.sort(() => Math.random() - 0.5)
+                break
+            }
+            return Math.random() - 0.5
+          })
         }
         shuffleArray(this.items)
       }

@@ -82,6 +82,15 @@ export default {
     this.answer = this.result
     this.selected = this.answer.map(data => Number(data.split('-')[1]))
   },
+  watch: {
+    result() {
+      if (!this.result) {
+        return
+      }
+      this.answer = this.result
+      this.selected = this.answer.map(data => Number(data.split('-')[1]))
+    }
+  },
   methods: {
     changeItem(event, no) {
       this.$set(this.answer, no - 1, `${no}-${event}`)
@@ -94,7 +103,11 @@ export default {
     },
     showAnswer(subQuestion) {
       const answer = this.item.answer
-      const targetSubQuestionsNo = answer[subQuestion.no - 1].split('-')[1]
+      const targetSubQuestions = answer.find(ans => Number(ans.split('-')[0]) === subQuestion.no)
+      if (!targetSubQuestions) {
+        return ''
+      }
+      const targetSubQuestionsNo = targetSubQuestions.split('-')[1]
       const targetAnswer = subQuestion.choices.find(choice => choice.no === Number(targetSubQuestionsNo))
 
       const target = this.answer[subQuestion.no - 1]

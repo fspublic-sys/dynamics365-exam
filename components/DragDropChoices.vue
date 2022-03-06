@@ -125,6 +125,14 @@ export default {
     }
     this.answer = this.result
   },
+  watch: {
+    result() {
+      if (!this.result) {
+        return
+      }
+      this.answer = this.result
+    }
+  },
   computed: {
     getAnswerText() {
       return (props) => {
@@ -156,7 +164,11 @@ export default {
     },
     showAnswer(props) {
       const answer = this.item.answer
-      const targetChoicesNo = answer[props.index].split('-')[1]
+      const targetChoices = answer.find(ans => Number(ans.split('-')[0]) === props.index + 1)
+      if (!targetChoices) {
+        return ''
+      }
+      const targetChoicesNo = targetChoices.split('-')[1]
       const targetAnswer = this.item.choices.find(choice => choice.no === Number(targetChoicesNo))
 
       const target = this.answer[props.index]
