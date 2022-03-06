@@ -67,6 +67,12 @@ export default {
         id: this.item.id
       }
       store.commit('setAnswer', data)
+    },
+    result() {
+      if (!this.result) {
+        return
+      }
+      this.answer = this.result
     }
   },
   created() {
