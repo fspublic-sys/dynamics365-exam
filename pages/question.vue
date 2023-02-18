@@ -232,7 +232,7 @@ export default {
         case 37:
           this.prevTab()
           break
-        case 40:
+        case 17:
           this.resultAnswer()
           break
         default:
