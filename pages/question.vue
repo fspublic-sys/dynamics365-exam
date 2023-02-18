@@ -121,6 +121,10 @@ export default {
       this.progressLinear = (this.questionCnt + 1) / this.items.length * 100
     }
   },
+  beforeDestroy() {
+    //キーコードによる動作の削除
+    window.removeEventListener("keydown", this.keyAction)
+  },
   created() {
     try {
       this.items = require(`../json/${this.$route.query.exam}`)
@@ -166,6 +170,7 @@ export default {
       this.tab = this.displayIds[this.questionCnt]
       this.progressLinear = (this.questionCnt + 1) / this.items.length * 100
     } catch(err) {}
+    window.addEventListener("keydown", this.keyAction)
   },
   methods: {
     getChoicesType(type) {
@@ -218,6 +223,21 @@ export default {
     },
     execute() {
       this.$router.push({ path: 'answer', query: { exam: this.$route.query.exam }})
+    },
+    keyAction(e) {
+      switch(e.keyCode) {
+        case 39:
+          this.nextTab()
+          break
+        case 37:
+          this.prevTab()
+          break
+        case 40:
+          this.resultAnswer()
+          break
+        default:
+          break
+      }
     }
   }
 }
