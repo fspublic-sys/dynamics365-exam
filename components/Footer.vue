@@ -24,6 +24,7 @@
       class="btn-style"
       depressed
       @click="$emit('prevTab')"
+      @keyup.left="$emit('prevTab')"
     >
       前の問題
     </v-btn>
@@ -34,6 +35,7 @@
       class="btn-style"
       depressed
       @click="$emit('resultAnswer')"
+      @keyup.down="$emit('resultAnswer')"
     >
       解答確認
     </v-btn>
@@ -44,6 +46,7 @@
         class="btn-style"
         depressed
         @click="$emit('nextTab')"
+        @keyup.right="$emit('nextTab')"
       >
         次の問題
       </v-btn>
